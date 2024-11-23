@@ -29,28 +29,40 @@ class Request {
     }
 
     /**
- * @api {get} /counties Get list of counties
+ * @api {get} /cities Get list of cities
  * @apiname index
- * @apiGroup Counties
+ * @apiGroup Cities
  * @apiVersion 1.0.0
  *
- * @apiSuccess {Object[]} counties List of counties.
- * @apiSuccess {Number} counties.id  County id
- * @apiSuccess {String} counties.name County name
+ * @apiSuccess {Object[]} cities List of cities.
+ * @apiSuccess {Number} cities.id  City id
+ * @apiSuccess {String} cities.name City name
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
- *     {
- *       "data": [
- *             {"id":2,"name":"B\u00elcs-Kiskun"},
- *  *          {"id":3,'name':"Baranya"},
- *             {...}
- *             ],
- *       "message":"Ok",
- *       "status":200
- *     }
+ * "data": [
+ *       {
+ *           "id": "5",
+ *          "zip_code": "3261",
+ *           "city": "Abasár",
+ *          "id_county": "10"
+ *       }
+ *  ],
+ *   "message": "OK",
+ *   "code": 200
+ * 
+ * "data": [
+ *      {
+ *           "id": "6",
+ *          "zip_code": "3882",
+ *           "city": "Abaújalpár",
+ *          "id_county": "10"
+ *       }
+ *   ],
+ *   "message": "OK",
+ *   "code": 200
  *
- * @apiError CountyNotFound The id of county was not found.
+ * @apiError CityNotFound The id of city was not found.
  *
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
@@ -62,35 +74,38 @@ class Request {
  */
 
  /**
- * @api {get} /counties/:id Get county with given id
+ * @api {get} /cities/:id Get city with given id
  * @apiParam {Number} id Users unique ID
  * @apiname index
- * @apiGroup Counties
+ * @apiGroup Cities
  * @apiVersion 1.0.0
  *
- * @apiSuccess {Object[]} counties      List of counties.
- * @apiSuccess {Number} counties.id     County id
- * @apiSuccess {String} counties.name   County name
+ * @apiSuccess {Object[]} cities      List of cities.
+ * @apiSuccess {Number} cities.id     City id
+ * @apiSuccess {String} cities.name   City name
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
- *     {
- *       "data": [
- *             {"id":2,"name":"B\u00elcs-Kiskun"},
- *             ],
- *       "message":"Ok",
- *       "status":200
- *     }
+ *     "data": [
+ *       {
+ *           "id": "6",
+ *           "zip_code": "3882",
+ *           "city": "Abaújalpár",
+ *           "id_county": "5"
+ *       }
+ *   ],
+ *   "message": "OK",
+ *   "code": 200
  *
- * @apiError CountyNotFound The id of county was not found.
+ * @apiError CityNotFound The id of city was not found.
  *
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
- *       "data": [],
- *       "message": "CountyNotFound",
- *       "status": "404"
- *     }
+ *   "data": [],
+ *  "message": "CityNotFound",
+ *   "code": 404
+*      }
  */
  
     private static function getRequest(): void
@@ -135,33 +150,33 @@ class Request {
     }
 
     /** 
-    * @api {delete} /counties/:id delete county with given id
+    * @api {delete} /cities/:id delete city with given id
     * @apiParam {Number} id Users unique ID
     * @apiname delete
-    * @apiGroup Counties
+    * @apiGroup Cities
     * @apiVersion 1.0.0
     *
-    * @apiSuccess {Object[]} counties      List of counties.
-    * @apiSuccess {Number} counties.id     County id
-    * @apiSuccess {String} counties.name   County name
+    * @apiSuccess {Object[]} cities      List of cities.
+    * @apiSuccess {Number} cities.id     City id
+    * @apiSuccess {String} cities.name   City name
     *
     * @apiSuccessExample {json} Success-Response:
     *     HTTP/1.1 200 OK
     *     {
     *       "data": [],
-    *       "message":"No content",
+    *       "message":"",
     *       "status":204
     *     }
     *
-    * @apiError CountyNotFound The id of county was not found.
+    * @apiError CityNotFound The id of city was not found.
     *
     * @apiErrorExample Error-Response:
     *     HTTP/1.1 404 Not Found
-    *     {
-    *       "data": [],
-    *       "message": "Bad Request",
-    *       "status":400
-    *     }
+    *     
+    * "data": [],
+    * "message": "/counties/7/citis/2 not found",
+    * "code": 404
+    * }
     */
 
     private static function deleteRequest(): void
@@ -198,33 +213,33 @@ class Request {
     }
 
     /**
- * @api {post} /counties/:id post county with given id
+ * @api {post} /cities/:id post city with given id
  * @apiParam {Number} id Users unique ID
  * @apiname post
- * @apiGroup Counties
+ * @apiGroup Cities
  * @apiVersion 1.0.0
  *
- * @apiSuccess {Object[]} counties      List of counties.
- * @apiSuccess {Number} counties.id     County id
- * @apiSuccess {String} counties.name   County name
+ * @apiSuccess {Object[]} cities      List of cities.
+ * @apiSuccess {Number} cities.id     City id
+ * @apiSuccess {String} cities.name   City name
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *       "data": [
- *             {"id":},
+ *             {"id":5},
  *             ],
  *       "message":"Created",
  *       "status":201
  *     }
  *
- * @apiError CountyNotFound The id of county was not found.
+ * @apiError CityNotFound The id of city was not found.
  *
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "data": [],
- *       "message": "County Not Found",
+ *       "message": "City Not Found",
  *       "status": "404"
  *     }
  */
@@ -265,33 +280,33 @@ class Request {
     }
 
     /**
- * @api {post} /counties/:id post county with given id
+ * @api {put} /cities/:id post city with given id
  * @apiParam {Number} id Users unique ID
  * @apiname put
- * @apiGroup Counties
+ * @apiGroup Cities
  * @apiVersion 1.0.0
  *
- * @apiSuccess {Object[]} counties      List of counties.
- * @apiSuccess {Number} counties.id     County id
- * @apiSuccess {String} counties.name   County name
+ * @apiSuccess {Object[]} cities      List of cities.
+ * @apiSuccess {Number} cities.id     City id
+ * @apiSuccess {String} cities.name   City name
  *
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *       "data": [
- *             {"id":},
+ *             {"id":4},
  *             ],
- *       "message":"Created",
+ *       "message":"Updated",
  *       "status":201
  *     }
  *
- * @apiError CountyNotFound The id of county was not found.
+ * @apiError CityNotFound The id of city was not found.
  *
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "data": [],
- *       "message": "County Not Found",
+ *       "message": "Not Found",
  *       "status": "404"
  *     }
  */
