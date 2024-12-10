@@ -1,4 +1,7 @@
 <?php
+ /**
+ * @author Nagy Gergely, Király Gábor 
+ **/
 session_start();
 include './vendor/autoload.php';
 

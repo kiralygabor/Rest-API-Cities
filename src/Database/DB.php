@@ -1,4 +1,7 @@
 <?php
+ /**
+ * @author Nagy Gergely, Király Gábor 
+ **/
 namespace App\Database;
 
 class DB

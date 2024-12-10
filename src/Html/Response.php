@@ -1,12 +1,15 @@
 <?php
+ /**
+ * @author Nagy Gergely, Király Gábor 
+ **/
 namespace App\Html;
 
 class Response 
 {
     const STATUES = [
 
-        100 => "Continue",
-        200 => "OK",
+        100 => "RequestContinue",
+        200 => "OK",    
         201 => "Created",
         400 => "Bad Request",
         404 => "Not Found"

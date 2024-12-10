@@ -1,5 +1,7 @@
 <?php
-
+ /**
+ * @author Nagy Gergely, Király Gábor 
+ **/
 namespace App\Repositories;
 
 use App\Database\DB;
@@ -10,9 +12,9 @@ class BaseRepository extends DB
 
     public function getAll(): array
     {
-        $query = $this->select() . "ORDER BY name";
-        
-        return $this->mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
+    $query = $this->select() . " ORDER BY name";
+    $result = $this->mysqli->query($query);
+    return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function select(): string
@@ -23,46 +25,17 @@ class BaseRepository extends DB
     public function find(int $id): array
     {
         $query = $this->select() . "WHERE id = $id";
-
         $result = $this->mysqli->query($query)->fetch_assoc();
         if (!$result) {
             $result = [];
         }
-
         return $result;
     }
-
-    public function findCity(int $id): array
-    {
-        $query = $this->select() . "WHERE id_county = $id";
-
-        $result = $this->mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
-        if (!$result) {
-            $result = [];
-        }
-
-        return $result;
-    }
-
-    public function findCityId(int $id): array
-    {
-        $query = $this->select() . "WHERE id = $id";
-
-        $result = $this->mysqli->query($query)->fetch_all(MYSQLI_ASSOC);
-        if (!$result) {
-            $result = [];
-        }
-
-        return $result;
-    }
-
-
-
+    
     public function delete($id): string
     {
         $query = "DELETE FROM `{$this->tableName}` WHERE id = $id";
-        return $this->mysqli->query($query);
-        
+        return $this->mysqli->query($query); 
     }
 
     public function create(array $data): ?int

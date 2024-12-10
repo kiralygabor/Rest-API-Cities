@@ -1,9 +1,11 @@
 <?php
- 
+  /**
+ * @author Nagy Gergely, Király Gábor 
+ **/
 namespace App\Html;
- 
+   
 use App\Repositories\CountyRepository;
-
+ 
 use App\Repositories\CityRepository;
  
 class Request {
@@ -27,7 +29,7 @@ class Request {
                 break;
         }
     }
-
+ 
     /**
  * @api {get} /cities Get list of cities
  * @apiname index
@@ -111,7 +113,6 @@ class Request {
     private static function getRequest(): void
     {
         $resourceName = self::getResourceName();
-        //$cityName = self::getCityName();
         switch ($resourceName){
             case 'counties':
                 $db = new CountyRepository();
@@ -122,7 +123,6 @@ class Request {
                     Response::response($entity, $code);
                     break;
                 }
- 
                 $entities = $db->getAll();
                 if(empty($entities)){
                     $code = 404;
@@ -131,24 +131,36 @@ class Request {
                 break;
             case 'cities':
                 $db = new CityRepository();
-                $resourceId = self::getCityName();
-                $cityId = self::getCityId();
-                $code = 200;
-                if($cityId){
-                    $entity = $db->findCityId($cityId);
-                    Response::response($entity, $code);
+                $arrUri = self::getArrUri($_SERVER['REQUEST_URI']);
+                if(count($arrUri) == 4)
+                {
+                    $countyId = self::getCountyId();
+                    $entities = $db->findCityByCountyId($countyId);
+                    if (empty($entities)) {
+                        Response::response([], 404, "No cities found for county ID: $countyId");
+                    } else {
+                        Response::response($entities, 200);
+                        
+                    }
                     break;
                 }
-                $entities = $db->getAll();
-                if(empty($entities)){
-                    $code = 404;
-                }    
- 
+                else
+                {
+                    $cityId = self::getCityId();
+                    $entities = $db->findByCityId($cityId);
+                    if (empty($entities)) {
+                        Response::response([], 404, "No cities found for county ID: $cityId");
+                    } else {
+                        Response::response($entities, 200);
+                        
+                    }
+                    break;
+                } 
             default:
-                Response::response([], 404,  $_SERVER['REQUEST_URI'] . " not found");
-        }
+                Response::response([], 404, $_SERVER['REQUEST_URI'] . " not found");
+            }
     }
-
+ 
     /** 
     * @api {delete} /cities/:id delete city with given id
     * @apiParam {Number} id Users unique ID
@@ -178,7 +190,7 @@ class Request {
     * "code": 404
     * }
     */
-
+ 
     private static function deleteRequest(): void
     {
         $id = self::getResourceId();
@@ -209,10 +221,10 @@ class Request {
                 Response::response([], 404,  $_SERVER['REQUEST_URI'] . " not found");
            
             }
-                
+               
     }
-
-    /**
+ 
+  /**
  * @api {post} /cities/:id post city with given id
  * @apiParam {Number} id Users unique ID
  * @apiname post
@@ -244,6 +256,7 @@ class Request {
  *     }
  */
 
+ 
     private static function postRequest()
     {
         $newId = 0;
@@ -273,12 +286,12 @@ class Request {
                 }
                 Response::response(['id' => $newId], $code);
                 break;
-
+ 
             default:
                 Response::response([], 404, $_SERVER['REQUEST_URI'] . " not found");
         }
     }
-
+ 
     /**
  * @api {put} /cities/:id post city with given id
  * @apiParam {Number} id Users unique ID
@@ -310,7 +323,7 @@ class Request {
  *       "status": "404"
  *     }
  */
-
+ 
     private static function putRequest()
 {
     $id = self::getResourceId();
@@ -325,13 +338,13 @@ class Request {
             $db = new CountyRepository();
             $data = self::getRequestData();
             $entity = $db->find($id);
-            
+           
             if($entity) {
             $result = $db->update($id, ['name' => $data['name']]);
             }
             if ($result) {
                 $code = 201;
-            }
+            }$code = $result ? 200 : 404; // OK or Not Found
             Response::response([], $code);
             break;
         case 'cities':
@@ -339,9 +352,9 @@ class Request {
             $db = new CityRepository();
             $data = self::getRequestData();
             $entity = $db->find($id);
-            
             if($entity) {
-            $result = $db->update($id, ['city' => $data['name']]);
+            $result = $db->update($id, ['city' => $data['city']]);
+            $code = $result ? 200 : 404; // OK or Not Found
             }
             if ($result) {
                 $code = 201;
@@ -357,12 +370,15 @@ class Request {
     private static function getRequestData(): ?array {
         return json_decode(file_get_contents("php://input"), true);
     }
-
+ 
     private static function getArrUri(string $requestUri): ?array
-        {
-            return explode("/", $requestUri) ?? null;
-        }
-        
+    {
+        $arr = explode("/", $requestUri);
+        error_log("Request URI: $requestUri");
+        error_log("Exploded URI: " . print_r($arr, true));
+        return $arr;
+    }
+       
         private static function getResourceName(): string
         {
             $arrUri = self::getArrUri($_SERVER['REQUEST_URI']);
@@ -371,23 +387,10 @@ class Request {
             {
                 $result = $arrUri[count($arrUri) - 2];
             }
-
+ 
             return $result;
         }
-
-        private static function getCityName(): string
-        {
-            $arrUri = self::getArrUri($_SERVER['REQUEST_URI']);
-            $result = $arrUri[count($arrUri) - 2];
-            if(is_numeric($result))
-            {
-                $result = $arrUri[count($arrUri) - 2];
-            }
-
-            return $result;
-        }
-
-        private static function getResourceId(): int
+        private static function getCityId(): int
         {
             $arrUri = self::getArrUri($_SERVER['REQUEST_URI']);
             $result = 0;
@@ -397,8 +400,23 @@ class Request {
             }
             return $result;
         }
-
-        private static function getCityId(): int
+ 
+        private static function getCountyId(): int
+        {
+            $arrUri = self::getArrUri($_SERVER['REQUEST_URI']);
+            $result = 0;
+            if(count($arrUri) == 3 && is_numeric($arrUri[count($arrUri) - 1]))
+            {
+                $result = $arrUri[count($arrUri) - 1];
+            }
+            else
+            {
+                $result = $arrUri[count($arrUri) - 2];
+            }
+            return $result;
+        }
+ 
+        private static function getResourceId(): int
         {
             $arrUri = self::getArrUri($_SERVER['REQUEST_URI']);
             $result = 0;

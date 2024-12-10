@@ -1,5 +1,7 @@
 <?php
-
+ /**
+ * @author Nagy Gergely, Király Gábor 
+ **/
 namespace App\Repositories;
 class CountyRepository extends BaseRepository
 {
@@ -8,4 +10,6 @@ class CountyRepository extends BaseRepository
         parent::__construct($host, $user, $password, $db);
         $this->tableName = 'counties';
     }
+
+    
 }
